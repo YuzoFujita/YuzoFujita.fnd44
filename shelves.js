@@ -13,7 +13,7 @@ function renderShelves() {
       span.style.cursor = "pointer";
       span.style.marginRight = "10px";
       span.style.backgroundColor = "yellow";
-      span.addEventListener("click", function(){
+      span.addEventListener("click", function () {
         document.getElementById("itemInput").value = items[j];
         document.getElementById("placeInput").value = i + 1;
       })
@@ -24,7 +24,7 @@ function renderShelves() {
 }
 
 function addItem() {
-  const itemInput = document.getElementById("itemInput"); 
+  const itemInput = document.getElementById("itemInput");
   const item = itemInput.value;
   const placeInput = document.getElementById("placeInput");
   const place = Number(placeInput.value);
@@ -49,15 +49,16 @@ function addItem() {
       }
     }
   }
-  shelves[place - 1].push(item); 
+  shelves[place - 1].push(item);
   renderShelves();
   itemInput.value = "";
   placeInput.value = "";
+  localStorage.setItem("shelvesData", JSON.stringify(shelves));
   return;
 }
 
 function removeItem() {
-  const itemInput = document.getElementById("itemInput"); 
+  const itemInput = document.getElementById("itemInput");
   const item = itemInput.value;
   const placeInput = document.getElementById("placeInput");
   const place = Number(placeInput.value);
@@ -70,22 +71,35 @@ function removeItem() {
     alert("場所には1～6の数字を入力してください。")
     return;
   }
-  const targetItems = shelves[place - 1]; 
+  const targetItems = shelves[place - 1];
   for (let i = 0; i < targetItems.length; i++) {
     if (targetItems[i] === item) {
-      targetItems.splice(i, 1); 
+      targetItems.splice(i, 1);
       renderShelves();
-        itemInput.value = "";
-  placeInput.value = "";
+      itemInput.value = "";
+      placeInput.value = "";
+      localStorage.setItem("shelvesData", JSON.stringify(shelves));
       return;
     }
   }
   alert("そのアイテムは見つかりませんでした。");
   return;
-} 
+}
 
 const addBtn = document.getElementById("addBtn");
 const removeBtn = document.getElementById("removeBtn");
 
 addBtn.addEventListener("click", addItem);
 removeBtn.addEventListener("click", removeItem);
+
+window.addEventListener("load", function () {
+  const savedData = localStorage.getItem("shelvesData");
+  
+  if (savedData) {
+    const parsedData = JSON.parse(savedData);
+    for (let i = 0; i < parsedData.length; i++) {
+      shelves[i] = parsedData[i];
+    }
+    renderShelves();
+  }
+});
